@@ -8,7 +8,6 @@ from flask import Flask, request, jsonify
 import uuid
 import os
 from tensorflow.keras.models import load_model
-import numpy as np
 from flask import send_from_directory
 
 file=open('vocab.txt','r')
@@ -161,7 +160,6 @@ target_word_index=y_tokenizer.word_index
 
 app = Flask(__name__)
 
-import os
 save_path="."
 from tensorflow.keras.models import load_model
 model=load_model(os.path.join(save_path,'myModel.h5'),custom_objects={'AttentionLayer': AttentionLayer})
