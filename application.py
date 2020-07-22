@@ -9,7 +9,8 @@ import uuid
 import os
 from tensorflow.keras.models import load_model
 from flask import send_from_directory
-
+import nltk
+nltk.download('stopwords')
 file=open('vocab.txt','r')
 x_tr=file.read()
 x_tr=np.array(x_tr.split('\n'))
