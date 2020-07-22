@@ -113,7 +113,7 @@ stop_words = set(stopwords.words('english'))
 
 def text_cleaner(text,num):
     newString = text.lower()
-    newString = BeautifulSoup(newString, "html").text
+    newString = BeautifulSoup(newString, "html.parser").text
     newString = re.sub(r'\([^)]*\)', '', newString)
     newString = re.sub('"','', newString)
     newString = ' '.join([contraction_mapping[t] if t in contraction_mapping else t for t in newString.split(" ")])    
