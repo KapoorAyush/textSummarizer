@@ -48,4 +48,4 @@ tf-estimator-nightly==1.14.0.dev2019030115
 traitlets==4.3.2
 virtualenv==16.7.2
 webencodings==0.5.1
-Werkzeug==0.14.1
+Werkzeug==0.15.3
