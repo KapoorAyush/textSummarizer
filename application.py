@@ -190,5 +190,5 @@ def calc_mpg():
     print(content['text'])
     return jsonify(response)
 
-if __name__ == '__main__':
-    app.run(host= '127.0.0.1',post=8000,debug=True)
+# if __name__ == '__main__':
+#     app.run(host= '127.0.0.1',post=8000,debug=True)
