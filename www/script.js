@@ -3,7 +3,7 @@
 class NameForm extends React.Component {
   constructor(props) {
     super(props);
-    this.state = {text: '',summary:''};
+    this.state = {text: '',summary:'',points:''};
 
     this.handleChange = this.handleChange.bind(this);
     this.handleSubmit = this.handleSubmit.bind(this);
@@ -25,9 +25,15 @@ class NameForm extends React.Component {
     xhr.onload = function () {
       var msg = JSON.parse(this.response)
       console.log("**" + msg.summary)
-      z.setState({summary:`${msg.summary}`})
-      
-      } ;
+      var points=''
+      for(var i=1;i<=msg.npts;i++)
+      {
+        var temp="msg.point".concat(String(i))
+        points[i]=eval(temp)
+      }
+      console.log(points)
+      z.setState({summary:`${msg.summary}`,points:`${points}`})
+    };
 
     xhr.send(txt);
     console.log(z.state)
@@ -45,6 +51,9 @@ class NameForm extends React.Component {
         </label>
         <input type="submit" value="Submit" />
         <span>{this.state.summary}</span>
+        <ul>
+          <li>{this.state.points}</li>
+        </ul>
       </form>
     );
   }
