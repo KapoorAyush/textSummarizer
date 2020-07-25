@@ -10,7 +10,8 @@ class NameForm extends React.Component {
   }
   
   handleChange(event) {
-    this.setState({text: event.target.value,summary:''});
+    this.setState({text: event.target.value,summary:'',points:''});
+    points=[]
   }
 
   handleSubmit(event) {
@@ -46,9 +47,10 @@ class NameForm extends React.Component {
   render() {
     return (
       <form onSubmit={this.handleSubmit} className="form">
-        <input type="text" className="textInput" value={this.state.text} onChange={this.handleChange} />  
-        <input type="submit" value="Submit" />
-        <h1>{this.state.summary}</h1>
+        <textarea rows="10" cols="100" className="textInput" value={this.state.text} onChange={this.handleChange} />  
+        <br/>
+        <input type="submit" value="Submit" className="btn btn-outline-dark" id="submitButton"/>
+        <h3 id="head">{this.state.summary}</h3>
         <ul>
           {points.map(points => <li>{points}</li>)}
         </ul>
