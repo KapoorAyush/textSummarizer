@@ -51,7 +51,7 @@ class NameForm extends React.Component {
           <input type="text" value={this.state.text} onChange={this.handleChange} />
         </label>
         <input type="submit" value="Submit" />
-        <span>{this.state.summary}</span>
+        <h1>{this.state.summary}</h1>
         <ul>
           {points.map(points => <li>{points}</li>)}
         </ul>
