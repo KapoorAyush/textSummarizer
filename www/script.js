@@ -1,5 +1,5 @@
 
-
+var points=[]
 class NameForm extends React.Component {
   constructor(props) {
     super(props);
@@ -8,7 +8,7 @@ class NameForm extends React.Component {
     this.handleChange = this.handleChange.bind(this);
     this.handleSubmit = this.handleSubmit.bind(this);
   }
-
+  
   handleChange(event) {
     this.setState({text: event.target.value,summary:''});
   }
@@ -25,10 +25,11 @@ class NameForm extends React.Component {
     xhr.onload = function () {
       var msg = JSON.parse(this.response)
       console.log("**" + msg.summary)
-      var points=''
-      for(var i=1;i<=msg.npts;i++)
+      
+      for(var i=0;i<msg.npts;i++)
       {
-        var temp="msg.point".concat(String(i))
+        var str="msg.point";
+        var temp=str.concat(String(i+1))
         points[i]=eval(temp)
       }
       console.log(points)
@@ -52,7 +53,7 @@ class NameForm extends React.Component {
         <input type="submit" value="Submit" />
         <span>{this.state.summary}</span>
         <ul>
-          <li>{this.state.points}</li>
+          {points.map(points => <li>{points}</li>)}
         </ul>
       </form>
     );
