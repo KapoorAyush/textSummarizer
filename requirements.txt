@@ -3,3 +3,4 @@ numpy==1.19.0
 bs4==0.0.1
 tf-nightly==2.4.0.dev20200722
 nltk==3.5
+networkx==2.4
