@@ -27,8 +27,10 @@ h1 {
   width: 70%;
   border-top: 0.5px solid black;
 }
-.imgPreview img {
-  height: 100%;
+#points{
+  width: 70%;
+  margin: auto 15%;
+  text-align: left;
 }
 .previewText {
   width: 100%;

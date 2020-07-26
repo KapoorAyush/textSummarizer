@@ -51,7 +51,7 @@ class NameForm extends React.Component {
         <br/>
         <input type="submit" value="Submit" className="btn btn-outline-dark" id="submitButton"/>
         <h3 id="head">{this.state.summary}</h3>
-        <ul>
+        <ul id="points">
           {points.map(points => <li>{points}</li>)}
         </ul>
       </form>

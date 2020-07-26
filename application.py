@@ -277,7 +277,7 @@ def calc_mpg():
     x = content['text']
     points=generate_summary(x)
     npts=len(points)
-    txt=['sostok _START_ '+str(text_strip(x))+' _END_ eostok']
+    txt=['sostok '+str(text_strip(x))+' eostok']
     txt=pad_sequences( x_tokenizer.texts_to_sequences(txt), maxlen=max_text_len, padding='post')
     pred=decode_sequence(txt.reshape(1,max_text_len))
     summary = str(pred)
