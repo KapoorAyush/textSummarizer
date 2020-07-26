@@ -11,16 +11,16 @@ from tensorflow.keras.models import load_model
 from flask import send_from_directory
 import nltk
 nltk.download('stopwords')
-file=open('vocab.txt','r')
+file=open('vocab.txt','r',encoding="utf-8")
 x_tr=file.read()
 x_tr=np.array(x_tr.split('\n'))
 x_tr=np.delete(x_tr,-1)
-file=open('yvocab.txt','r')
+file=open('yvocab.txt','r',encoding="utf-8")
 y_tr=file.read()
 y_tr=np.array(y_tr.split('\n'))
 y_tr=np.delete(y_tr,-1)
-max_text_len=40
-max_summary_len=10
+max_text_len=100
+max_summary_len=15
 
 #!/usr/bin/env python
 # coding: utf-8
@@ -191,51 +191,61 @@ def seq2text(input_seq):
 
 from tensorflow.keras.preprocessing.text import Tokenizer 
 from tensorflow.keras.preprocessing.sequence import pad_sequences
-from nltk.corpus import stopwords
-stop_words = set(stopwords.words('english')) 
+# from nltk.corpus import stopwords
+# stop_words = set(stopwords.words('english')) 
+import re
 
-def text_cleaner(text,num):
-    newString = text.lower()
-    newString = BeautifulSoup(newString, "html.parser").text
-    newString = re.sub(r'\([^)]*\)', '', newString)
-    newString = re.sub('"','', newString)
-    newString = ' '.join([contraction_mapping[t] if t in contraction_mapping else t for t in newString.split(" ")])    
-    newString = re.sub(r"'s\b","",newString)
-    newString = re.sub("[^a-zA-Z]", " ", newString) 
-    newString = re.sub('[m]{2,}', 'mm', newString)
-    if(num==0):
-        tokens = [w for w in newString.split() if not w in stop_words]
-    else:
-        tokens=newString.split()
-    long_words=[]
-    for i in tokens:
-        if len(i)>1:                                                 #removing short word
-            long_words.append(i)   
-    return (" ".join(long_words)).strip()
+#Removes non-alphabetic characters:
+def text_strip(row):
+        
+        #ORDER OF REGEX IS VERY VERY IMPORTANT!!!!!!
+        
+        row=re.sub("(\\t)", ' ', str(row)).lower() #remove escape charecters
+        row=re.sub("(\\r)", ' ', str(row)).lower() 
+        row=re.sub("(\\n)", ' ', str(row)).lower()
+#         row = ''.join([contraction_mapping[t] if t in contraction_mapping else t for t in row.split(" ")]) 
+        row=re.sub("(__+)", ' ', str(row)).lower()   #remove _ if it occors more than one time consecutively
+        row=re.sub("(--+)", ' ', str(row)).lower()   #remove - if it occors more than one time consecutively
+        row=re.sub("(~~+)", ' ', str(row)).lower()   #remove ~ if it occors more than one time consecutively
+        row=re.sub("(\+\++)", ' ', str(row)).lower()   #remove + if it occors more than one time consecutively
+        row=re.sub("(\.\.+)", ' ', str(row)).lower()   #remove . if it occors more than one time consecutively
+        
+        row=re.sub(r"[<>()|&©ø\[\]\'\",;?~*!]", ' ', str(row)).lower() #remove <>()|&©ø"',;?~*!
+        
+        row=re.sub("(mailto:)", ' ', str(row)).lower() #remove mailto:
+        row=re.sub(r"(\\x9\d)", ' ', str(row)).lower() #remove \x9* in text
+        row=re.sub("([iI][nN][cC]\d+)", 'INC_NUM', str(row)).lower() #replace INC nums to INC_NUM
+        row=re.sub("([cC][mM]\d+)|([cC][hH][gG]\d+)", 'CM_NUM', str(row)).lower() #replace CM# and CHG# to CM_NUM
+        
+        
+        row=re.sub("(\.\s+)", ' ', str(row)).lower() #remove full stop at end of words(not between)
+        row=re.sub("(\-\s+)", ' ', str(row)).lower() #remove - at end of words(not between)
+        row=re.sub("(\:\s+)", ' ', str(row)).lower() #remove : at end of words(not between)
+        
+        row=re.sub("(\s+.\s+)", ' ', str(row)).lower() #remove any single charecters hanging between 2 spaces
+        
+        #Replace any url as such https://abc.xyz.net/browse/sdf-5327 ====> abc.xyz.net
+        try:
+            url = re.search(r'((https*:\/*)([^\/\s]+))(.[^\s]+)', str(row))
+            repl_url = url.group(3)
+            row = re.sub(r'((https*:\/*)([^\/\s]+))(.[^\s]+)',repl_url, str(row))
+        except:
+            pass #there might be emails with no url in them
+        
 
-contraction_mapping = {"ain't": "is not", "aren't": "are not","can't": "cannot", "'cause": "because", "could've": "could have", "couldn't": "could not",
-                           "didn't": "did not",  "doesn't": "does not", "don't": "do not", "hadn't": "had not", "hasn't": "has not", "haven't": "have not",
-                           "he'd": "he would","he'll": "he will", "he's": "he is", "how'd": "how did", "how'd'y": "how do you", "how'll": "how will", "how's": "how is",
-                           "I'd": "I would", "I'd've": "I would have", "I'll": "I will", "I'll've": "I will have","I'm": "I am", "I've": "I have", "i'd": "i would",
-                           "i'd've": "i would have", "i'll": "i will",  "i'll've": "i will have","i'm": "i am", "i've": "i have", "isn't": "is not", "it'd": "it would",
-                           "it'd've": "it would have", "it'll": "it will", "it'll've": "it will have","it's": "it is", "let's": "let us", "ma'am": "madam",
-                           "mayn't": "may not", "might've": "might have","mightn't": "might not","mightn't've": "might not have", "must've": "must have",
-                           "mustn't": "must not", "mustn't've": "must not have", "needn't": "need not", "needn't've": "need not have","o'clock": "of the clock",
-                           "oughtn't": "ought not", "oughtn't've": "ought not have", "shan't": "shall not", "sha'n't": "shall not", "shan't've": "shall not have",
-                           "she'd": "she would", "she'd've": "she would have", "she'll": "she will", "she'll've": "she will have", "she's": "she is",
-                           "should've": "should have", "shouldn't": "should not", "shouldn't've": "should not have", "so've": "so have","so's": "so as",
-                           "this's": "this is","that'd": "that would", "that'd've": "that would have", "that's": "that is", "there'd": "there would",
-                           "there'd've": "there would have", "there's": "there is", "here's": "here is","they'd": "they would", "they'd've": "they would have",
-                           "they'll": "they will", "they'll've": "they will have", "they're": "they are", "they've": "they have", "to've": "to have",
-                           "wasn't": "was not", "we'd": "we would", "we'd've": "we would have", "we'll": "we will", "we'll've": "we will have", "we're": "we are",
-                           "we've": "we have", "weren't": "were not", "what'll": "what will", "what'll've": "what will have", "what're": "what are",
-                           "what's": "what is", "what've": "what have", "when's": "when is", "when've": "when have", "where'd": "where did", "where's": "where is",
-                           "where've": "where have", "who'll": "who will", "who'll've": "who will have", "who's": "who is", "who've": "who have",
-                           "why's": "why is", "why've": "why have", "will've": "will have", "won't": "will not", "won't've": "will not have",
-                           "would've": "would have", "wouldn't": "would not", "wouldn't've": "would not have", "y'all": "you all",
-                           "y'all'd": "you all would","y'all'd've": "you all would have","y'all're": "you all are","y'all've": "you all have",
-                           "you'd": "you would", "you'd've": "you would have", "you'll": "you will", "you'll've": "you will have",
-                           "you're": "you are", "you've": "you have"}
+        
+        row = re.sub("(\s+)",' ',str(row)).lower() #remove multiple spaces
+        
+        #Should always be last
+        row=re.sub("(\s+.\s+)", ' ', str(row)).lower() #remove any single charecters hanging between 2 spaces
+
+        
+        
+        return row
+
+
+
+
 
 reverse_target_word_index=y_tokenizer.index_word
 reverse_source_word_index=x_tokenizer.index_word
@@ -246,7 +256,7 @@ app = Flask(__name__)
 
 save_path="."
 from tensorflow.keras.models import load_model
-model=load_model(os.path.join(save_path,'myModel.h5'),custom_objects={'AttentionLayer': AttentionLayer})
+model=load_model(os.path.join(save_path,'model.h5'),custom_objects={'AttentionLayer': AttentionLayer})
 decoder_model=load_model(os.path.join(save_path,'decoder.h5'),custom_objects={'AttentionLayer': AttentionLayer})
 encoder_model=load_model(os.path.join(save_path,'encoder.h5'))
 
@@ -267,7 +277,7 @@ def calc_mpg():
     x = content['text']
     points=generate_summary(x)
     npts=len(points)
-    txt=['sostok '+text_cleaner(x,0)+' eostok']
+    txt=['sostok _START_ '+str(text_strip(x))+' _END_ eostok']
     txt=pad_sequences( x_tokenizer.texts_to_sequences(txt), maxlen=max_text_len, padding='post')
     pred=decode_sequence(txt.reshape(1,max_text_len))
     summary = str(pred)
