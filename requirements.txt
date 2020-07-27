@@ -5,3 +5,4 @@ tf-nightly==2.4.0.dev20200722
 nltk==3.5
 networkx==2.4
 gensim==3.8.3
+keras==2.4.3
