@@ -49,7 +49,7 @@ class NameForm extends React.Component {
       <form onSubmit={this.handleSubmit} className="form">
         <textarea rows="10" cols="100" className="textInput" value={this.state.text} onChange={this.handleChange} />  
         <br/>
-        <input type="submit" value="Submit" className="btn btn-outline-dark" id="submitButton"/>
+        <input type="submit" value="Generate Summary" className="btn btn-outline-dark" id="submitButton"/>
         <h3 id="head">{this.state.summary}</h3>
         <ul id="points">
           {points.map(points => <li>{points}</li>)}

@@ -85,7 +85,7 @@ def generate_summary(file_name):
 
     # Step 1 - Read text anc split it
     sentences =  read_article(file_name)
-    top_n=int(len(sentences)/2)
+    top_n=int(len(sentences)*2/3)
     # Step 2 - Generate Similary Martix across sentences
     sentence_similarity_martix = build_similarity_matrix(sentences, stop_words)
 
@@ -238,14 +238,7 @@ def text_strip(row):
         
         #Should always be last
         row=re.sub("(\s+.\s+)", ' ', str(row)).lower() #remove any single charecters hanging between 2 spaces
-
-        
-        
         return row
-
-
-
-
 
 reverse_target_word_index=y_tokenizer.index_word
 reverse_source_word_index=x_tokenizer.index_word
@@ -343,10 +336,12 @@ def calc_mpg():
     x = content['text']
     points=generate_summary(x)
     npts=len(points)
-    txt=['sostok '+str(text_strip(x))+' eostok']
+    txt=[str(text_strip(x))]
     txt=pad_sequences( x_tokenizer.texts_to_sequences(txt), maxlen=max_text_len, padding='post')
     pred=decode_sequence(txt.reshape(1,max_text_len))
     summary = str(pred)
+    summary=summary.split(' ',2)[2]
+    summary=summary.rsplit(' ', 1)[0]
     response = {"id":str(uuid.uuid4()),"summary":summary,"npts":npts}
     for i in range(1,npts+1):
         response.update({"point"+str(i):points[i-1]})

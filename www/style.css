@@ -6,7 +6,10 @@ body{
 }
 h1 {
   text-align: center;
-  margin:2rem;
+}
+h5{
+  text-align: center;
+  
 }
 .textInput {
   border-bottom: 4px solid #d3d3d3;
