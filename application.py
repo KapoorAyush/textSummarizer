@@ -320,7 +320,7 @@ model = Model([encoder_inputs, decoder_inputs], decoder_outputs)
 app = Flask(__name__)
 
 model.load_weights('weights.h5')
-# save_path="."
+save_path="."
 # from tensorflow.keras.models import load_model
 # model=load_model(os.path.join(save_path,'model.h5'),custom_objects={'AttentionLayer': AttentionLayer})
 decoder_model=load_model(os.path.join(save_path,'decoder.h5'),custom_objects={'AttentionLayer': AttentionLayer})
