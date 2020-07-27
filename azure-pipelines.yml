@@ -33,9 +33,7 @@ stages:
     pool:
       vmImage: $(vmImageName)
     steps:
-    - checkout: self
-      lfs: true
-      persistCredentials: true
+    
     - task: UsePythonVersion@0
       inputs:
         versionSpec: '$(pythonVersion)'
