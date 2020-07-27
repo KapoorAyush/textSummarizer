@@ -252,11 +252,77 @@ reverse_source_word_index=x_tokenizer.index_word
 target_word_index=y_tokenizer.word_index
 
 
+from keras import backend as K 
+import gensim
+from numpy import *
+import numpy as np
+import pandas as pd 
+import re
+from bs4 import BeautifulSoup
+from keras.preprocessing.text import Tokenizer 
+from keras.preprocessing.sequence import pad_sequences
+from nltk.corpus import stopwords
+from tensorflow.keras.layers import Input, LSTM, Embedding, Dense, Concatenate, TimeDistributed
+from tensorflow.keras.models import Model
+
+import warnings
+pd.set_option("display.max_colwidth", 200)
+warnings.filterwarnings("ignore")
+
+print("Size of vocabulary from the w2v model = {}".format(x_voc))
+
+K.clear_session()
+
+latent_dim = 300
+embedding_dim=200
+
+# Encoder
+encoder_inputs = Input(shape=(max_text_len,))
+
+#embedding layer
+enc_emb =  Embedding(x_voc, embedding_dim,trainable=True)(encoder_inputs)
+
+#encoder lstm 1
+encoder_lstm1 = LSTM(latent_dim,return_sequences=True,return_state=True,dropout=0.4,recurrent_dropout=0.4)
+encoder_output1, state_h1, state_c1 = encoder_lstm1(enc_emb)
+
+#encoder lstm 2
+encoder_lstm2 = LSTM(latent_dim,return_sequences=True,return_state=True,dropout=0.4,recurrent_dropout=0.4)
+encoder_output2, state_h2, state_c2 = encoder_lstm2(encoder_output1)
+
+#encoder lstm 3
+encoder_lstm3=LSTM(latent_dim, return_state=True, return_sequences=True,dropout=0.4,recurrent_dropout=0.4)
+encoder_outputs, state_h, state_c= encoder_lstm3(encoder_output2)
+
+# Set up the decoder, using `encoder_states` as initial state.
+decoder_inputs = Input(shape=(None,))
+
+#embedding layer
+dec_emb_layer = Embedding(y_voc, embedding_dim,trainable=True)
+dec_emb = dec_emb_layer(decoder_inputs)
+
+decoder_lstm = LSTM(latent_dim, return_sequences=True, return_state=True,dropout=0.4,recurrent_dropout=0.2)
+decoder_outputs,decoder_fwd_state, decoder_back_state = decoder_lstm(dec_emb,initial_state=[state_h, state_c])
+
+attn_layer = AttentionLayer(name='attention_layer')
+attn_out, attn_states = attn_layer([encoder_outputs, decoder_outputs])
+
+decoder_concat_input = Concatenate(axis=-1, name='concat_layer')([decoder_outputs, attn_out])
+
+#dense layer
+decoder_dense =  TimeDistributed(Dense(y_voc, activation='softmax'))
+decoder_outputs = decoder_dense(decoder_concat_input)
+
+# Define the model 
+model = Model([encoder_inputs, decoder_inputs], decoder_outputs)
+
+
 app = Flask(__name__)
 
-save_path="."
-from tensorflow.keras.models import load_model
-model=load_model(os.path.join(save_path,'model.h5'),custom_objects={'AttentionLayer': AttentionLayer})
+model.load_weights('weights.h5')
+# save_path="."
+# from tensorflow.keras.models import load_model
+# model=load_model(os.path.join(save_path,'model.h5'),custom_objects={'AttentionLayer': AttentionLayer})
 decoder_model=load_model(os.path.join(save_path,'decoder.h5'),custom_objects={'AttentionLayer': AttentionLayer})
 encoder_model=load_model(os.path.join(save_path,'encoder.h5'))
 
