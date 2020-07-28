@@ -246,7 +246,7 @@ target_word_index=y_tokenizer.word_index
 
 
 from keras import backend as K 
-import gensim
+# import gensim
 from numpy import *
 import numpy as np
 import pandas as pd 

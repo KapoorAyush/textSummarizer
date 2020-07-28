@@ -4,6 +4,5 @@ bs4==0.0.1
 tf-nightly==2.4.0.dev20200722
 nltk==3.5
 networkx==2.4
-gensim==3.8.3
 keras==2.4.3
 pandas==1.0.5
