@@ -46,8 +46,8 @@ class NameForm extends React.Component {
 
   render() {
     return (
-      <form onSubmit={this.handleSubmit} className="form">
-        <textarea rows="10" cols="100" className="textInput" value={this.state.text} onChange={this.handleChange} />  
+      <form onSubmit={this.handleSubmit} className="form" >
+        <textarea rows="10" cols="100" className="textInput" placeholder="Copy and paste a news article here..." value={this.state.text} onChange={this.handleChange} />  
         <br/>
         <input type="submit" value="Generate Summary" className="btn btn-outline-dark" id="submitButton"/>
         <h3 id="head">{this.state.summary}</h3>
