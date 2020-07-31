@@ -10,7 +10,8 @@ class NameForm extends React.Component {
   }
   
   handleChange(event) {
-    this.setState({text: event.target.value,summary:'',points:''});
+    this.setState({ text: event.target.value.replace(/[^\w/. ]/gi, ""),points:'' });
+    // this.setState({text: event.target.value,summary:'',points:''});
     points=[]
   }
 
@@ -46,7 +47,7 @@ class NameForm extends React.Component {
 
   render() {
     return (
-      <form onSubmit={this.handleSubmit} className="form" >
+      <form onSubmit={this.handleSubmit} className="form">
         <textarea rows="10" cols="100" className="textInput" placeholder="Copy and paste a news article here..." value={this.state.text} onChange={this.handleChange} />  
         <br/>
         <input type="submit" value="Generate Summary" className="btn btn-outline-dark" id="submitButton"/>
