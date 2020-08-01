@@ -38,18 +38,12 @@ body{
   width: 70%;
   margin: auto 15%;
   text-align: left;
+  margin-bottom: 40px;
 }
-.previewText {
-  width: 100%;
-  margin-top: 20px;
-}
+
 #submitButton {
   padding: 12px;
   width: 200px;
   font-weight: bold;
   cursor: pointer;
-}
-.centerText {
-  text-align: center;
-  width: 500px;
 }
