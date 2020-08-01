@@ -10,7 +10,7 @@ class NameForm extends React.Component {
   }
   
   handleChange(event) {
-    this.setState({ text: event.target.value.replace(/[^\w/. ]/gi, ""),points:'' });
+    this.setState({ text: event.target.value.replace(/[^\w/. ]/gi, " "),points:'' });
     // this.setState({text: event.target.value,summary:'',points:''});
     points=[]
   }
